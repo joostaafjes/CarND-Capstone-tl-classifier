@@ -6,6 +6,7 @@ import numpy as np
 
 from styx_msgs.msg import TrafficLight
 from object_classifier import ObjectClassifier
+from color_classifier import ColorClassifier
 
 
 class TLClassifier(object):
@@ -14,8 +15,7 @@ class TLClassifier(object):
         self.object_classifier = ObjectClassifier()
 
         # init traffic light color classifier (step 2)
-
-        pass
+        self.color_classifier = ColorClassifier()
 
     def get_classification(self, image):
         """Determines the color of the traffic light in the image
@@ -31,7 +31,9 @@ class TLClassifier(object):
         # step 1
         traffic_light_images = self.object_classifier.get_traffic_light_images(image)
 
-        return TrafficLight.UNKNOWN
+        traffic_light_color = self.color_classifier.predict_images(traffic_light_images)
+
+        return traffic_light_color
 
 def load_image_into_numpy_array(image):
     (im_width, im_height) = image.size
@@ -44,8 +46,8 @@ for root, dirs, files in os.walk("images", topdown=False):
     dirname = os.path.dirname('output_images/')
     os.makedirs(dirname, exist_ok=True)
     for filename in files:
-
         image = load_img(root + '/' + filename)  # this is a PIL image
         image_np = load_image_into_numpy_array(image)
-        print(tl_classifier.get_classification(image_np))
+        color = tl_classifier.get_classification(image_np)
+        print(image, color)
 
