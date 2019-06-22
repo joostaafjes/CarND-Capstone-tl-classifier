@@ -51,7 +51,7 @@ class ObjectClassifier:
                 output_dict = sess.run(tensor_dict,
                                        feed_dict={image_tensor: np.expand_dims(image, 0)})
                 elapsed = time.time() - start
-                print('inference took:', elapsed, ' seconds')
+                # print('inference took:', elapsed, ' seconds')
 
                 # all outputs are float32 numpy arrays, so convert types as appropriate
                 output_dict['num_detections'] = int(output_dict['num_detections'][0])
@@ -92,8 +92,6 @@ class ObjectClassifier:
             else:
                 if classes[i] == self.OBJECT_DETECTION_TRAFFIC_LIGHT_CLASS:
                     print(' confidence too low:', confidence)
-
-        print('traffic lights found:', len(output_images))
 
         return output_images
 

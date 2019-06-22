@@ -35,6 +35,9 @@ class TLClassifier(object):
 
         return traffic_light_color
 
+#
+# Below is only used for testing
+#
 def load_image_into_numpy_array(image):
     (im_width, im_height) = image.size
     return np.array(image.getdata()).reshape(
@@ -42,6 +45,10 @@ def load_image_into_numpy_array(image):
 
 tl_classifier = TLClassifier()
 
+tf_colors = ['red', 'yellow', 'green', None, 'unknown']
+
+cnt_error = 0
+cnt_ok = 0
 for root, dirs, files in os.walk("images", topdown=False):
     dirname = os.path.dirname('output_images/')
     os.makedirs(dirname, exist_ok=True)
@@ -49,5 +56,12 @@ for root, dirs, files in os.walk("images", topdown=False):
         image = load_img(root + '/' + filename)  # this is a PIL image
         image_np = load_image_into_numpy_array(image)
         color = tl_classifier.get_classification(image_np)
-        print(image, color)
+        path = root + '/' + filename
+        print(path, tf_colors[color])
+        if path.lower().find(tf_colors[color]) == -1:
+            cnt_error += 1
+        else:
+            cnt_ok += 1
+
+print('Succes rate:', 100 * cnt_ok / (cnt_ok + cnt_error), ' %')
 
