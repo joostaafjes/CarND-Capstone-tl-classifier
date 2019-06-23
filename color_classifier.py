@@ -1,10 +1,17 @@
-from typing import overload
+from aetypes import Enum
 
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array, load_img
 import numpy as np
 from PIL import Image, ImageOps
-from styx_msgs.msg import TrafficLight
+# from styx_msgs.msg import TrafficLight
+# for testing
+
+class TrafficLight(Enum):
+    UNKNOWN=4
+    GREEN=2
+    YELLOW=1
+    RED=0
 
 class ColorClassifier:
     def __init__(self):
@@ -20,7 +27,7 @@ class ColorClassifier:
 
         return preds[0], prob[0]
 
-    def predict_images(self, images: list):
+    def predict_images(self, images):
         predictions = []
         for image in images:
             pred, prob = self.predict_image(image)
@@ -32,8 +39,9 @@ class ColorClassifier:
 
     def crop_image(self, img):
         img.thumbnail((self.IMAGE_SIZE, self.IMAGE_SIZE), Image.ANTIALIAS)
-        delta_w = self.IMAGE_SIZE - img.width
-        delta_h = self.IMAGE_SIZE - img.height
+        width, height = img.size
+        delta_w = self.IMAGE_SIZE - width
+        delta_h = self.IMAGE_SIZE - height
         padding = (delta_w // 2, delta_h // 2, delta_w - (delta_w // 2), delta_h - (delta_h // 2))
         img = ImageOps.expand(img, padding, fill=0)  # fill with black dots
 

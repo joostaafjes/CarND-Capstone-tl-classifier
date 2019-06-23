@@ -71,7 +71,6 @@ class ObjectClassifier:
 
         tf_boxes = []
         output_images = []
-        os.makedirs('output_images/', exist_ok=True)
         for i in range(len(boxes)):
             confidence = float(scores[i])
             if confidence >= self.DETECTION_THRESHOLD and classes[i] == self.OBJECT_DETECTION_TRAFFIC_LIGHT_CLASS:
@@ -87,11 +86,7 @@ class ObjectClassifier:
                 #
                 crop_image = image[ymin:ymax, xmin:xmax]
                 crop_output_image = Image.fromarray(crop_image)
-                crop_output_image.save('output_images/' + str(random.randint(1000, 2000)) + '-' + str(i) + '.png')
                 output_images.append(crop_output_image)
-            else:
-                if classes[i] == self.OBJECT_DETECTION_TRAFFIC_LIGHT_CLASS:
-                    print(' confidence too low:', confidence)
 
         return output_images
 

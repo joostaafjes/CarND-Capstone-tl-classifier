@@ -1,13 +1,15 @@
 import os
+import time
+
 import tensorflow as tf
 from keras.preprocessing.image import array_to_img, img_to_array, load_img
 from PIL import Image, ImageOps
 import numpy as np
 
-from styx_msgs.msg import TrafficLight
 from object_classifier import ObjectClassifier
 from color_classifier import ColorClassifier
 
+from pathlib2 import Path  # python 2 backport
 
 class TLClassifier(object):
     def __init__(self):
@@ -51,11 +53,14 @@ cnt_error = 0
 cnt_ok = 0
 for root, dirs, files in os.walk("images", topdown=False):
     dirname = os.path.dirname('output_images/')
-    os.makedirs(dirname, exist_ok=True)
+    Path(dirname).mkdir(exist_ok=True)
     for filename in files:
         image = load_img(root + '/' + filename)  # this is a PIL image
         image_np = load_image_into_numpy_array(image)
+        start = time.time()
         color = tl_classifier.get_classification(image_np)
+        elapsed = time.time() - start
+        print('elapsed time:', elapsed, ' s')
         path = root + '/' + filename
         print(path, tf_colors[color])
         if path.lower().find(tf_colors[color]) == -1:
