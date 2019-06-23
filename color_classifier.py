@@ -1,11 +1,11 @@
-from aetypes import Enum
-
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array, load_img
 import numpy as np
 from PIL import Image, ImageOps
 # from styx_msgs.msg import TrafficLight
 # for testing
+
+from enum import Enum
 
 class TrafficLight(Enum):
     UNKNOWN=4
