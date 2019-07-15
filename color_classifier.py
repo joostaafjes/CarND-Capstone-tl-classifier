@@ -2,8 +2,7 @@ from keras.models import load_model
 from keras.preprocessing.image import img_to_array, load_img
 import numpy as np
 from PIL import Image, ImageOps
-# from styx_msgs.msg import TrafficLight
-# for testing
+import tensorflow as tf
 
 from enum import Enum
 
@@ -17,13 +16,15 @@ class ColorClassifier:
     def __init__(self):
         self.IMAGE_SIZE = 32
         self.class_model = load_model('models'+ '/model.h5')
+        self.class_graph = tf.get_default_graph()
 
     def predict_image(self, image):
         x = self.crop_image(image)
         x = img_to_array(x)
         x = np.expand_dims(x, axis=0)
-        preds = self.class_model.predict_classes(x)
-        prob = self.class_model.predict_proba(x)
+        with self.class_graph.as_default():
+            preds = self.class_model.predict_classes(x)
+            prob = self.class_model.predict_proba(x)
 
         return preds[0], prob[0]
 

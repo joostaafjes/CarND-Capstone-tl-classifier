@@ -11,7 +11,7 @@ class ObjectClassifier:
     def __init__(self):
         # constants
         self.OBJECT_DETECTION_TRAFFIC_LIGHT_CLASS = 10
-        self.DETECTION_THRESHOLD = 0.3
+        self.DETECTION_THRESHOLD = 0.20
 
         # init object classifier (step 1)
         self.detection_graph = tf.Graph()
@@ -31,8 +31,8 @@ class ObjectClassifier:
         return self.extract_image_from_boxes(image, output_dict)
 
     def run_inference_for_single_image(self, image):
-        with self.detection_graph.as_default():
-            with tf.Session() as sess:
+        with self.detection_graph.as_default() as graph:
+            with tf.Session(graph=graph) as sess:
                 # Get handles to input and output tensors
                 ops = tf.get_default_graph().get_operations()
                 all_tensor_names = {output.name for op in ops for output in op.outputs}
