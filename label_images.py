@@ -35,13 +35,13 @@ with tf.Session(graph=graph) as session:
             color, _ = tl_classifier.get_classification(session, image_np)
             elapsed = time.time() - start
             draw = ImageDraw.Draw(image)
-            font = ImageFont.truetype('/Library/Fonts/Arial.ttf', 55)
+            # font = ImageFont.truetype('/Library/Fonts/Arial.ttf', 55)
             output_path = output_base_path + filename
             print('elapsed time:', elapsed, ' s')
             print(path, tf_colors[color])
             # output_path = output_base_path + tf_colors[color] + '/' + filename
             # copyfile(root + '/' + filename, output_path)
-            draw.text((10, 10), tf_colors[color], font=font, fill=(255, 255, 0), )
+            draw.text((10, 10), tf_colors[color], fill=(255, 255, 0), )
             image.save(output_path)
 
             if path.lower().find(tf_colors[color]) == -1:
