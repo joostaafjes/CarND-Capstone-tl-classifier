@@ -11,7 +11,7 @@ class ObjectClassifier:
     def __init__(self):
         # constants
         self.OBJECT_DETECTION_TRAFFIC_LIGHT_CLASS = 10
-        self.DETECTION_THRESHOLD = 0.20
+        self.DETECTION_THRESHOLD = 0.30
 
         # init object classifier (step 1)
         self.detection_graph = tf.Graph()
@@ -69,18 +69,26 @@ class ObjectClassifier:
 
         height, width, _ = image.shape
 
-        tf_boxes = []
         output_images = []
         for i in range(len(boxes)):
             confidence = float(scores[i])
-            if confidence >= self.DETECTION_THRESHOLD and classes[i] == self.OBJECT_DETECTION_TRAFFIC_LIGHT_CLASS:
-                tf_boxes.append(boxes[i])
-                confidence = float(scores[i])
-                ymin, xmin, ymax, xmax = tuple(boxes[i].tolist())
-                ymin = int(ymin * height)
-                ymax = int(ymax * height)
-                xmin = int(xmin * width)
-                xmax = int(xmax * width)
+            # print('confidence object detection: {}'.format(confidence))
+            ymin, xmin, ymax, xmax = tuple(boxes[i].tolist())
+            # print('bb before: x: {} {} - y: {} {}'.format(xmin, xmax, ymin, ymax))
+            ymin = int(ymin * height)
+            ymax = int(ymax * height)
+            xmin = int(xmin * width)
+            xmax = int(xmax * width)
+            # print('bb after : x: {} {} - y: {} {}'.format(xmin, xmax, ymin, ymax))
+            box_width = xmax - xmin
+            box_height = ymax - ymin
+            box_ratio = float(box_height) / box_width
+            if confidence >= self.DETECTION_THRESHOLD and \
+               classes[i] == self.OBJECT_DETECTION_TRAFFIC_LIGHT_CLASS and \
+               box_width > 21 and \
+               box_height > 20 and \
+               box_ratio > 1.5:
+                print('width: {} - height: {} - ratio: {}'.format(box_width, box_height, box_ratio))
                 #
                 # extract cropped image from bounding box
                 #

@@ -29,7 +29,7 @@ class TLClassifier(object):
 
         traffic_light_color = self.color_classifier.predict_images(traffic_light_images)
 
-        return traffic_light_color
+        return traffic_light_color, traffic_light_images
 
 #
 # Below is only used for testing
