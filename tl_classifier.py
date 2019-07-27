@@ -13,7 +13,7 @@ class TLClassifier(object):
         # init traffic light color classifier (step 2)
         self.color_classifier = ColorClassifier()
 
-    def get_classification(self, image):
+    def get_classification(self, session, image):
         """Determines the color of the traffic light in the image
 
         Args:
@@ -25,12 +25,14 @@ class TLClassifier(object):
         """
 
         # step 1
-        traffic_light_images = self.object_classifier.get_traffic_light_images(image)
+        traffic_light_images = self.object_classifier.get_traffic_light_images(session, image)
 
         traffic_light_color = self.color_classifier.predict_images(traffic_light_images)
 
         return traffic_light_color, traffic_light_images
 
+    def get_graph(self):
+        return self.object_classifier.detection_graph
 #
 # Below is only used for testing
 #
