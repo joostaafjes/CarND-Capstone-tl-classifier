@@ -1,5 +1,6 @@
 import os
 import time
+from shutil import copyfile
 
 from PIL import ImageDraw, ImageFont
 from keras.preprocessing.image import load_img
@@ -21,38 +22,41 @@ for color in tf_colors:
 cnt_error = 0
 cnt_ok = 0
 
-graph = tl_classifier.get_graph()
-with tf.Session(graph=graph) as session:
-    for root, dirs, files in os.walk("images", topdown=False):
-        for filename in files:
-            if filename.startswith('.DS_Store'):
-                continue
-            path = root + '/' + filename
-            print('start processing...{}'.format(path))
-            image = load_img(root + '/' + filename)  # this is a PIL image
-            image_np = load_image_into_numpy_array(image)
-            start = time.time()
-            color, _ = tl_classifier.get_classification(session, image_np)
-            elapsed = time.time() - start
-            draw = ImageDraw.Draw(image)
-            # font = ImageFont.truetype('/Library/Fonts/Arial.ttf', 55)
-            output_path = output_base_path + filename
-            print('elapsed time:', elapsed, ' s')
-            print(path, tf_colors[color])
-            # output_path = output_base_path + tf_colors[color] + '/' + filename
-            # copyfile(root + '/' + filename, output_path)
-            draw.text((10, 10), tf_colors[color], fill=(255, 255, 0), )
-            image.save(output_path)
+for root, dirs, files in os.walk("images", topdown=False):
+    for filename in files:
+        if filename.startswith('.DS_Store'):
+            continue
+        path = root + '/' + filename
+        print('start processing...{}'.format(path))
+        image = load_img(root + '/' + filename)  # this is a PIL image
+        image_np = load_image_into_numpy_array(image)
+        start = time.time()
+        color, _ = tl_classifier.get_classification(image_np)
+        elapsed = time.time() - start
+        draw = ImageDraw.Draw(image)
+        # font = ImageFont.truetype('/Library/Fonts/Arial.ttf', 55)
+        print('elapsed time:', elapsed, ' s')
+        print(path, tf_colors[color])
+        # output path either base dir or subdir for color
+        # output_path = output_base_path + filename
+        output_path = output_base_path + tf_colors[color] + '/' + filename
+        # draw text and write file in main output dir
+        draw.text((10, 10),
+                  tf_colors[color],
+                  # font=font,
+                  fill=(255, 255, 0),)
+        copyfile(root + '/' + filename, output_path)
+        image.save(output_path)
 
-            if path.lower().find(tf_colors[color]) == -1:
-                cnt_error += 1
-            else:
-                cnt_ok += 1
-            # tmp
-            # if cnt_error + cnt_ok > 5:
-            #     break
+        if path.lower().find(tf_colors[color]) == -1:
+            cnt_error += 1
+        else:
+            cnt_ok += 1
+        # tmp
         # if cnt_error + cnt_ok > 5:
         #     break
+    # if cnt_error + cnt_ok > 5:
+    #     break
 
 print('Succes rate:', 100 * cnt_ok / (cnt_ok + cnt_error), ' %')
 

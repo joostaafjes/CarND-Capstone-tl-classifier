@@ -22,19 +22,18 @@ class ObjectClassifier:
                     serialized_graph = fid.read()
                     od_graph_def.ParseFromString(serialized_graph)
                     tf.import_graph_def(od_graph_def, name='')
+                    self.session = tf.Session(graph=self.detection_graph)
             except Exception as e:
                 print(e)
                 exit()
 
-    def get_traffic_light_images(self, session, image):
-        output_dict = self.run_inference_for_single_image(session, image)
+    def get_traffic_light_images(self, image):
+        output_dict = self.run_inference_for_single_image(image)
         return self.extract_image_from_boxes(image, output_dict)
 
-    def run_inference_for_single_image(self, sess, image):
-        # with self.detection_graph.as_default() as graph:
-        #     with tf.Session(graph=graph) as sess:
+    def run_inference_for_single_image(self, image):
         # Get handles to input and output tensors
-        ops = tf.get_default_graph().get_operations()
+        ops = self.detection_graph.get_operations()
         all_tensor_names = {output.name for op in ops for output in op.outputs}
         tensor_dict = {}
         for key in [
@@ -42,13 +41,12 @@ class ObjectClassifier:
         ]:
             tensor_name = key + ':0'
             if tensor_name in all_tensor_names:
-                tensor_dict[key] = tf.get_default_graph().get_tensor_by_name(
-                    tensor_name)
-        image_tensor = tf.get_default_graph().get_tensor_by_name('image_tensor:0')
+                tensor_dict[key] = self.detection_graph.get_tensor_by_name(tensor_name)
+        image_tensor = self.detection_graph.get_tensor_by_name('image_tensor:0')
 
         # Run inference
         start = time.time()
-        output_dict = sess.run(tensor_dict,
+        output_dict = self.session.run(tensor_dict,
                                feed_dict={image_tensor: np.expand_dims(image, 0)})
         elapsed = time.time() - start
         # print('inference took:', elapsed, ' seconds')
