@@ -9,11 +9,9 @@ class TLClassifier(object):
     def __init__(self):
         # init object classifier (step 1)
         self.object_classifier = ObjectClassifier()
-        # self.object_classifier_session = self.object_classifier.get_session()
 
         # init traffic light color classifier (step 2)
         self.color_classifier = ColorClassifier()
-        # self.color_classifier_session = self.color_classifier.get_session()
 
     def get_classification(self, image):
         """Determines the color of the traffic light in the image
