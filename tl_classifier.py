@@ -5,6 +5,8 @@ import numpy as np
 from object_classifier import ObjectClassifier
 from color_classifier import ColorClassifier
 
+tf_colors = ['red', 'yellow', 'green', None, 'unknown']
+
 class TLClassifier(object):
     def __init__(self):
         # init object classifier (step 1)
@@ -13,7 +15,7 @@ class TLClassifier(object):
         # init traffic light color classifier (step 2)
         self.color_classifier = ColorClassifier()
 
-    def get_classification(self, image):
+    def get_classification(self, image, frame_id):
         """Determines the color of the traffic light in the image
 
         Args:
@@ -29,6 +31,10 @@ class TLClassifier(object):
 
         # step 2
         traffic_light_color = self.color_classifier.predict_images(traffic_light_images)
+
+        for idx, image in enumerate(traffic_light_images):
+            image.save('cropped/image{}-{}-{}.jpg'.format(frame_id, idx, tf_colors[traffic_light_color]))
+
 
         return traffic_light_color, traffic_light_images
 

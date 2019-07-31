@@ -22,6 +22,7 @@ for color in tf_colors:
 cnt_error = 0
 cnt_ok = 0
 
+idx = 0
 for root, dirs, files in os.walk("images", topdown=False):
     for filename in files:
         if filename.startswith('.DS_Store'):
@@ -31,10 +32,10 @@ for root, dirs, files in os.walk("images", topdown=False):
         image = load_img(root + '/' + filename)  # this is a PIL image
         image_np = load_image_into_numpy_array(image)
         start = time.time()
-        color, _ = tl_classifier.get_classification(image_np)
+        color, _ = tl_classifier.get_classification(image_np, idx)
         elapsed = time.time() - start
         draw = ImageDraw.Draw(image)
-        # font = ImageFont.truetype('/Library/Fonts/Arial.ttf', 55)
+        font = ImageFont.truetype('/Library/Fonts/Arial.ttf', 55)
         print('elapsed time:', elapsed, ' s')
         print(path, tf_colors[color])
         # output path either base dir or subdir for color
@@ -43,7 +44,7 @@ for root, dirs, files in os.walk("images", topdown=False):
         # draw text and write file in main output dir
         draw.text((10, 10),
                   tf_colors[color],
-                  # font=font,
+                  font=font,
                   fill=(255, 255, 0),)
         copyfile(root + '/' + filename, output_path)
         image.save(output_path)
@@ -55,6 +56,7 @@ for root, dirs, files in os.walk("images", topdown=False):
         # tmp
         # if cnt_error + cnt_ok > 5:
         #     break
+        idx += 1
     # if cnt_error + cnt_ok > 5:
     #     break
 

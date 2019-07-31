@@ -105,10 +105,22 @@ venv-python2/
 .mypy_cache/
 
 #images/
-output_images/
+output_images_plot/
 
 .idea/
 
+output_images/
+output_images_plot2/
 images/
+images-orig/
+images-plot/
+images-parking-lot-unsorted/
+tmp/
+tmp-cropped/
+output_images-orig/
+threshold-0.5/
+threshold-0.25/
+threshold-0.40/
+threshold-0.50/
 
 
